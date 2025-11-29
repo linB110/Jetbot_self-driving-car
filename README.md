@@ -1,5 +1,10 @@
 # Jetbot_self-driving-car
 
+# Environment
+1. Ubuntu : 20.04.6 LTS
+2. ROS : noetic
+3. cuda : release 10.2, V10.2.300
+
 # Hardware 
 1. Nvidia Jetson Nano 4GB
 2. Arduino Uno
