@@ -68,3 +68,7 @@ The model file (weights / configuration) used in this project is stored under:
 - `Reference/model/`
 
 You can find the model download link inside the **cover folder** under `Reference/model`.
+
+inference stage is divide into 2-stage (coarse and fine) which contains 4 and 43 classes respectively
+model 1 : Yolov4.weights
+model 2 : traffic.h5 => compile to onnx (on PC) => build to engine (tensorRT on jetson nano)
