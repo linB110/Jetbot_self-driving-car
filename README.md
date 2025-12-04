@@ -5,7 +5,7 @@
 * **Ubuntu** : 18.04.6 LTS
 * **ROS** : Noetic
 * **CUDA** : 10.2
-* **Python** : 3.10（Training Environment）
+* **Python** : 3.6.9 (defauly version on jetson nano)
 
 ## 🧰 Hardware
 
