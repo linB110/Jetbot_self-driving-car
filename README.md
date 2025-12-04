@@ -9,13 +9,13 @@
 
 ## 🧰 Hardware
 
-* 🟩 **Nvidia Jetson Nano 4GB**
-* 🔵 **Arduino Uno**
-* 📷 **Logitech USB 2D Camera**
-* 📡 **RPi Lidar A1**
-* ⚙️ **DC Motor x2**
-* 🔌 **L298N Motor Driver**
-* 🔋 **DC Power Bank**
+*  **Nvidia Jetson Nano 4GB**
+*  **Arduino Uno**
+*  **Logitech USB 2D Camera**
+*  **RPi Lidar A1**
+*  **DC Motor x2**
+*  **L298N Motor Driver**
+*  **DC Power Bank**
 
 ---
 
@@ -216,8 +216,8 @@ yolov4/
 ```yaml
 train: ./data/train/images
 val: ./data/valid/images
-nc: 3
-names: ["left", "right", "stop"]
+nc: 15
+names: ['100km', '120km', '20km', '30km', '50km', '60km', '70km', '80km', 'Ahead-only', 'General-caution', 'No-entry', 'Pedestrians', 'Stop', 'Turn-left-ahead', 'Turn-right-ahead']
 ```
 
 ---
