@@ -2,7 +2,7 @@
 
 ## 🖥️ Environment
 
-* **Ubuntu** : 20.04.6 LTS
+* **Ubuntu** : 18.04.6 LTS
 * **ROS** : Noetic
 * **CUDA** : 10.2
 * **Python** : 3.10（Training Environment）
