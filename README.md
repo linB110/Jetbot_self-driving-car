@@ -200,10 +200,9 @@ yolov4/
 │   ├── exp2/
 │   └── ...
 │
-├── scripts/                      🛠️ Helper tools
-│   ├── train.sh
+├── model_transform/                      🛠️ Helper tools
 │   ├── export_onnx.py
-│   └── visualize_data.py
+│   ├── export_trt.py
 │
 ├── requirements.txt
 └── README.md
@@ -228,7 +227,7 @@ names: ['100km', '120km', '20km', '30km', '50km', '60km', '70km', '80km', 'Ahead
 cd ~/yolov4/ScaledYOLOv4
 
 python train.py \
-  --img 416 \
+  --img 320 \
   --batch 16 \
   --epochs 50 \
   --data ../data.yaml \
