@@ -2,20 +2,20 @@
 
 ## 🖥️ Environment
 
-* **Ubuntu** : 18.04.6 LTS
-* **ROS** : melodic
+* **Ubuntu** : 20.04.6 LTS
+* **ROS** : Noetic
 * **CUDA** : 10.2
-* **Python** : 3.6.9（default version on Jetson nano）
+* **Python** : 3.10（Training Environment）
 
 ## 🧰 Hardware
 
-*  **Nvidia Jetson Nano 4GB**
-*  **Arduino Uno**
-*  **Logitech USB 2D Camera**
-*  **RPi Lidar A1**
-*  **DC Motor x2**
-*  **L298N Motor Driver**
-*  **DC Power Bank**
+* 🟩 **Nvidia Jetson Nano 4GB**
+* 🔵 **Arduino Uno**
+* 📷 **Logitech USB 2D Camera**
+* 📡 **RPi Lidar A1**
+* ⚙️ **DC Motor x2**
+* 🔌 **L298N Motor Driver**
+* 🔋 **DC Power Bank**
 
 ---
 
@@ -70,40 +70,54 @@ python setup.py build install
 pip install numpy==1.24.4 opencv-python pillow tqdm matplotlib pyyaml scipy seaborn cython tensorboard onnx thop
 ```
 
-🔧 models/yolo.py — Fix _initialize_biases()
+## 🛠️ 5. Apply Required Code Fixes
 
-File: models/yolo.py
-Function: _initialize_biases(self, cf=None)
-Typical location: around line 430–470
+### 🔧 models/yolo.py — Fix `_initialize_biases()`
 
+**File:** `models/yolo.py`
+**Function:** `_initialize_biases(self, cf=None)`
+**Typical location:** around **line 430–470**
+
+```python
 # avoid leaf in-place operation on torch variable view
 b = mi.bias.view(m.na, -1).clone()   # (na, no)
-🔧 numpy dtype fixes (global)
+```
 
-Files affected: all python files under ScaledYOLOv4
+### 🔧 numpy dtype fixes (global)
 
+**Files affected:** all python files under ScaledYOLOv4
+
+```bash
 find . -name "*.py" -exec sed -i 's/np.int/int/g' {} +
 find . -name "*.py" -exec sed -i 's/dtype=int16/dtype=np.int16/g' {} +
-🔧 utils/general.py — Fix build_targets()
+```
 
-File: utils/general.py
-Function: build_targets()
-Location: around line 550–570
+### 🔧 utils/general.py — Fix `build_targets()`
+
+**File:** `utils/general.py`
+**Function:** `build_targets()`
+**Location:** around **line 550–570**
 
 Original:
 
+```python
 indices.append((b, a, gj.clamp_(0, gain[3]), gi.clamp_(0, gain[2])))
+```
 
 Modified:
 
+```python
 gj = gj.clamp(0, int(gain[3].item() - 1e-3))
 gi = gi.clamp(0, int(gain[2].item() - 1e-3))
 indices.append((b, a, gj, gi))
-🔧 utils/general.py — Fix output_to_target()
+```
 
-Function: output_to_target()
-Location: around line 840–880
+### 🔧 utils/general.py — Fix `output_to_target()`
 
+**Function:** `output_to_target()`
+**Location:** around **line 840–880**
+
+```python
 if isinstance(targets, list):
     if len(targets):
         targets = torch.stack(targets, 0)
@@ -115,26 +129,40 @@ elif isinstance(targets, torch.Tensor):
 else:
     targets = torch.as_tensor(targets)
 return targets.detach().cpu().numpy()
-🔧 utils/datasets.py — Fix cache loading (PyTorch 2.x)
+```
 
-File: utils/datasets.py
-Location: around line 300–330
+### 🔧 utils/datasets.py — Fix cache loading (PyTorch 2.x)
 
+**File:** `utils/datasets.py`
+**Location:** around **line 300–330**
+
+```bash
 sed -i "s/torch.load(cache_path)/torch.load(cache_path, weights_only=False)/" utils/datasets.py
+```
 
 Also clear old cache:
 
+```bash
 rm -f ../train/labels.cache ../valid/labels.cache
-🔧 train.py — Fix interp → np.interp
+```
 
-File: train.py
-Location: search keyword interp(
+### 🔧 train.py — Fix `interp` → `np.interp`
 
+**File:** `train.py`
+**Location:** search keyword `interp(`
+
+```bash
 sed -i 's/interp(/np.interp(/g' train.py
-🔧 Disable plotting in test.py
+```
 
-File: test.py
-Location: around line 185–200
+### 🔧 Disable plotting in test.py
+
+**File:** `test.py`
+**Location:** around **line 185–200**
+
+```python
+#plot_images(...)
+```
 
 ---
 
