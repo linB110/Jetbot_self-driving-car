@@ -1,0 +1,31 @@
+<launch>
+  <!-- 1. start usb_cam node（without image_view window） -->
+  <node pkg="usb_cam"
+        type="usb_cam_node"
+        name="usb_cam"
+        output="screen">
+    <param name="video_device"  value="/dev/video0" />
+    <param name="image_width"   value="640" />
+    <param name="image_height"  value="480" />
+    <param name="pixel_format"  value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+  </node>
+
+  <!-- 2. start RPLIDAR -->
+  <include file="$(find rplidar_ros)/launch/rplidar_a1.launch" />
+
+  <!-- 3. start LiDAR-Image projection node -->
+  <node pkg="lidar"
+        type="lidar_projection.py"
+        name="lidar_projection"
+        output="screen">
+    <param name="image_topic" value="/usb_cam/image_raw" />
+    <param name="scan_topic"  value="/scan" />
+  </node>
+
+  <!-- 4. start rqt_image_view，for fusion image -->
+  <node pkg="rqt_image_view"
+        type="rqt_image_view"
+        name="rqt_image_view"
+        output="screen" />
+</launch>
