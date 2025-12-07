@@ -1,0 +1,35 @@
+camera:
+  image_topic: "/usb_cam/image_raw"
+  camera_matrix:
+    rows: 3
+    cols: 3
+    data: [516.75920708, 0.0, 314.85175451,
+           0.0, 517.4986627, 252.3543377,
+           0.0, 0.0, 1.0]
+  distortion_coeffs:
+    rows: 1
+    cols: 5
+    data: [0.08530888, -0.20265712, 0.00156592, -0.00109557, 0.25062066]
+
+lidar:
+  scan_topic: "/scan"
+
+extrinsics:
+  rotation:
+    rows: 3
+    cols: 3
+    data: [0, -1, 0,
+           0, 0, -1,
+           1, 0, 0]
+  translation:
+    rows: 3
+    cols: 1
+    data: [0.0, 0.0, 0.05]   # 50mm above camera
+
+projection:
+  point_size: 2
+  color: [0, 255, 0]   # green
+
+fusion:
+  threshold: 0.5     # meter
+  pixel_radius: 5 
