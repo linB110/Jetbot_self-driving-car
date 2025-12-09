@@ -24,8 +24,12 @@ extrinsics:
   translation:
     rows: 3
     cols: 1
-    data: [0.0, 0.0, 0.05]   # 50mm above camera
+    data: [0.0, -0.095, 0.11]   # camera -> lidar
 
 projection:
   point_size: 2
   color: [0, 255, 0]   # green
+
+fusion:
+  threshold: 0.5     # meter
+  pixel_radius: 5 
