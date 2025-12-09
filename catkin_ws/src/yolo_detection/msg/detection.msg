@@ -1,0 +1,4 @@
+string class_name
+
+float32 cx
+float32 cy
