@@ -5,23 +5,25 @@
 * **Ubuntu** : 18.04.6 LTS
 * **ROS** : melodic
 * **CUDA** : 10.2
-* **Python** : 3.6.9 (defauly version on jetson nano)
+* **Python** : 3.6.9 (default version on Jetson Nano)
+
+---
 
 ## 🧰 Hardware
 
-*  **Nvidia Jetson Nano 4GB**
-*  **Arduino Uno**
-*  **Logitech USB 2D Camera**
-*  **RPi Lidar A1**
-*  **DC Motor x2**
-*  **L298N Motor Driver**
-*  **DC Power Bank**
+* **Nvidia Jetson Nano 4GB**
+* **Arduino Uno**
+* **Logitech USB 2D Camera**
+* **RPi LiDAR A1**
+* **DC Motors ×2**
+* **L298N Motor Driver**
+* **DC Power Bank**
 
 ---
 
 # 🧪 Training Environment Setup (ScaledYOLOv4 + CUDA)
 
-> Training is done on Desktop GPU (RTX series). Jetson Nano is used for inference only.
+> Training is done on a desktop GPU (RTX series). Jetson Nano is used for inference only.
 
 ## 🚀 1. Create Conda Environment
 
@@ -76,7 +78,6 @@ pip install numpy==1.24.4 opencv-python pillow tqdm matplotlib pyyaml scipy seab
 
 **File:** `models/yolo.py`
 **Function:** `_initialize_biases(self, cf=None)`
-**Typical location:** around **line 430–470**
 
 ```python
 # avoid leaf in-place operation on torch variable view
@@ -85,26 +86,12 @@ b = mi.bias.view(m.na, -1).clone()   # (na, no)
 
 ### 🔧 numpy dtype fixes (global)
 
-**Files affected:** all python files under ScaledYOLOv4
-
 ```bash
 find . -name "*.py" -exec sed -i 's/np.int/int/g' {} +
 find . -name "*.py" -exec sed -i 's/dtype=int16/dtype=np.int16/g' {} +
 ```
 
 ### 🔧 utils/general.py — Fix `build_targets()`
-
-**File:** `utils/general.py`
-**Function:** `build_targets()`
-**Location:** around **line 550–570**
-
-Original:
-
-```python
-indices.append((b, a, gj.clamp_(0, gain[3]), gi.clamp_(0, gain[2])))
-```
-
-Modified:
 
 ```python
 gj = gj.clamp(0, int(gain[3].item() - 1e-3))
@@ -113,9 +100,6 @@ indices.append((b, a, gj, gi))
 ```
 
 ### 🔧 utils/general.py — Fix `output_to_target()`
-
-**Function:** `output_to_target()`
-**Location:** around **line 840–880**
 
 ```python
 if isinstance(targets, list):
@@ -133,32 +117,18 @@ return targets.detach().cpu().numpy()
 
 ### 🔧 utils/datasets.py — Fix cache loading (PyTorch 2.x)
 
-**File:** `utils/datasets.py`
-**Location:** around **line 300–330**
-
 ```bash
 sed -i "s/torch.load(cache_path)/torch.load(cache_path, weights_only=False)/" utils/datasets.py
-```
-
-Also clear old cache:
-
-```bash
 rm -f ../train/labels.cache ../valid/labels.cache
 ```
 
 ### 🔧 train.py — Fix `interp` → `np.interp`
-
-**File:** `train.py`
-**Location:** search keyword `interp(`
 
 ```bash
 sed -i 's/interp(/np.interp(/g' train.py
 ```
 
 ### 🔧 Disable plotting in test.py
-
-**File:** `test.py`
-**Location:** around **line 185–200**
 
 ```python
 #plot_images(...)
@@ -170,82 +140,34 @@ sed -i 's/interp(/np.interp(/g' train.py
 
 ```text
 yolov4/
-├── ScaledYOLOv4/                 📁 Main training code
+├── ScaledYOLOv4/                 # Main training code
 │   ├── models/
 │   ├── utils/
 │   ├── train.py
 │   ├── test.py
 │   └── ...
 │
-├── mish-cuda/                    ⚙️ CUDA Mish activation
+├── mish-cuda/                    # CUDA Mish activation
 │   ├── setup.py
 │   └── ...
 │
-├── data/                         🗂️ YOLO-format dataset
+├── data/                         # YOLO-format dataset
 │   ├── train/
-│   │   ├── images/               🖼️ Training images
-│   │   └── labels/               📝 YOLO txt labels
+│   │   ├── images/               # Training images
+│   │   └── labels/               # YOLO txt labels
 │   ├── valid/
-│   │   ├── images/
-│   │   └── labels/
-│   ├── test/ (optional)
-│   │   ├── images/
-│   │   └── labels/
-│   └── roboflow-raw/ (optional)
+│   ├── test/
+│   └── roboflow-raw/
 │
-├── data.yaml                     📘 Dataset configuration
+├── data.yaml                     # Dataset configuration
 │
-├── runs/                         📊 Training logs + weights
-│   ├── exp/
-│   ├── exp2/
-│   └── ...
+├── runs/                         # Training logs + weights
 │
-├── model_transform/                      🛠️ Helper tools
+├── model_transform/              # ONNX / TensorRT export tools
 │   ├── export_onnx.py
 │   ├── export_trt.py
 │
-├── requirements.txt
 └── README.md
-```
-
----
-
-# 🗂️ Project Folder Structure
-
-```text
-Arduino/
-├── libraries/ros_lib                 📁 ROS dependencies
-│   ├── ros/
-│   ├── ros.h/
-│   ├── string/
-│   └── ...
-│
-├── motor_motion/                     ⚙️  Motor control logics 
-    ├── motor_motion.h
-    ├── motor_motion.cpp
-    └── motor_motion.ino
-   
-
-catkin_ws/src                          🗂️ ROS workspace
-│── rplidar_ros/
-│   ├── launch/               
-│   ├── src/
-│   └── ...             
-│   
-│   
-│── lidar
-│   │── CMakeLists.txt
-│   │── package.xml
-│   │── config/
-│   │── scripts/lidar_projection.py, lidar_yolo_fusion.py 
-│   └── launch/lidar_camera_fusion.launch
-│   
-│
-├── yolo_detection/                         📊 Training logs + weights
-│   │── CMakeLists.txt
-│   │── package.xml
-│   ├── msg/
-│   ├── src/yolo_detection.cpp
 ```
 
 ---
@@ -256,7 +178,9 @@ catkin_ws/src                          🗂️ ROS workspace
 train: ./data/train/images
 val: ./data/valid/images
 nc: 15
-names: ['100km', '120km', '20km', '30km', '50km', '60km', '70km', '80km', 'Ahead-only', 'General-caution', 'No-entry', 'Pedestrians', 'Stop', 'Turn-left-ahead', 'Turn-right-ahead']
+names: ['100km', '120km', '20km', '30km', '50km', '60km', '70km', '80km',
+        'Ahead-only', 'General-caution', 'No-entry', 'Pedestrians',
+        'Stop', 'Turn-left-ahead', 'Turn-right-ahead']
 ```
 
 ---
@@ -275,3 +199,93 @@ python train.py \
   --weights '' \
   --name traffics_detection
 ```
+
+---
+
+# 🗂️ Project Folder Structure (Jetson + ROS)
+
+```text
+Arduino/
+├── libraries/ros_lib                # ROS dependencies
+│   ├── ros/
+│   ├── ros.h/
+│   └── ...
+│
+├── motor_motion/                    # Motor control logic
+│   ├── motor_motion.h
+│   ├── motor_motion.cpp
+│   └── motor_motion.ino
+
+catkin_ws/src                        # ROS workspace
+│── rplidar_ros/
+│   ├── launch/
+│   ├── src/
+│   └── ...
+│
+│── lidar/
+│   ├── CMakeLists.txt
+│   ├── package.xml
+│   ├── config/
+│   ├── scripts/lidar_projection.py
+│   ├── scripts/lidar_yolo_fusion.py
+│   └── launch/lidar_camera_fusion.launch
+│
+│── yolo_detection/
+│   ├── CMakeLists.txt
+│   ├── package.xml
+│   ├── msg/
+│   └── src/yolo_detection.cpp
+```
+
+---
+
+# 🧠 Jetson Nano – Inference Pipeline
+
+Final autonomous flow:
+
+```
+YOLOv4 image detection
+        ↓
+LiDAR distance detection
+        ↓
+Camera–LiDAR fusion
+        ↓
+Decision logic (stop / slow / turn)
+        ↓
+Arduino motor control
+```
+
+---
+
+# ▶️ Running the Full System on Jetbot
+
+Below are the actual commands used to run the entire pipeline.
+
+## **1️⃣ Start ROS Master**
+
+```bash
+roscore
+```
+
+## **2️⃣ Launch LiDAR + Camera + YOLO Fusion Node**
+
+```bash
+roslaunch lidar lidar_camera_fusion.launch use_gui:=true
+```
+
+* `use_gui:=true` → display camera with bounding boxes
+* Disable GUI:
+
+```bash
+use_gui:=false
+```
+
+## **3️⃣ Start Arduino Motor Control (ROSserial)**
+
+```bash
+rosrun rosserial_python serial_node.py _port:=/dev/ttyACM0
+```
+
+Jetbot begins autonomous driving based on fused perception + decision-making.
+
+---
