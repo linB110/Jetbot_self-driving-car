@@ -166,7 +166,7 @@ sed -i 's/interp(/np.interp(/g' train.py
 
 ---
 
-# 🗂️ Project Folder Structure
+# 🗂️ Training Folder Structure
 
 ```text
 yolov4/
@@ -206,6 +206,46 @@ yolov4/
 │
 ├── requirements.txt
 └── README.md
+```
+
+---
+
+# 🗂️ Project Folder Structure
+
+```text
+Arduino/
+├── libraries/ros_lib                 📁 ROS dependencies
+│   ├── ros/
+│   ├── ros.h/
+│   ├── string/
+│   └── ...
+│
+├── motor_motion/                     ⚙️  Motor control logics 
+    ├── motor_motion.h
+    ├── motor_motion.cpp
+    └── motor_motion.ino
+   
+
+catkin_ws/src                          🗂️ ROS workspace
+│── rplidar_ros/
+│   ├── launch/               
+│   ├── src/
+│   └── ...             
+│   
+│   
+│── lidar
+│   │── CMakeLists.txt
+│   │── package.xml
+│   │── config/
+│   │── scripts/lidar_projection.py, lidar_yolo_fusion.py 
+│   └── launch/lidar_camera_fusion.launch
+│   
+│
+├── yolo_detection/                         📊 Training logs + weights
+│   │── CMakeLists.txt
+│   │── package.xml
+│   ├── msg/
+│   ├── src/yolo_detection.cpp
 ```
 
 ---
