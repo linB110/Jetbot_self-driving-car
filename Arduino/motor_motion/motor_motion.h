@@ -21,14 +21,6 @@ extern const int ENCODER_L_B;
 #define PPR 960.0f
 #endif
 
-#ifndef PPA  // pulse per angle without puck
-#define PPA 3580.0f / 360.0f
-#endif
-
-#ifndef PPA_p  // pulse per angle with puck
-#define PPA_p 3915.0f / 360.0f
-#endif
-
 #ifndef SPEED_WINDOW_MS
 #define SPEED_WINDOW_MS 500
 #endif
@@ -61,5 +53,3 @@ void turn_left();
 void rotate_cw(int pwm = 125);
 void rotate_ccw(int pwm = 125);
 void stop_motors();
-
-void rotate_angle(float angle);
