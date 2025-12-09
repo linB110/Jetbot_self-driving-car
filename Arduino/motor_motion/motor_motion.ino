@@ -3,15 +3,16 @@
 #include <ros.h>
 #include <std_msgs/String.h>
 
+#include <MsTimer2.h>
 #include "motor_motion.h"
 
 ros::NodeHandle nh;
 
 // Use timer interrupt to activate motion close-loop control
-const unsigned long Motion_control_period = 10;
+const unsigned long Motion_control_period = 50;
 
 // base RPM to drive motor
-int base_pwm = 60;
+volatile int base_pwm = 85;
 
 enum TrafficSigns{
   SIGN_AHEAD_ONLY,
@@ -55,9 +56,12 @@ void motion_callback(const std_msgs::String& msg)
 {
   TrafficSigns sign = classify_sign(msg.data);
 
+  
+  
   switch (sign) {
 
     case SIGN_STOP:
+      base_pwm = 0;
       stop_motors();
       break;
 
@@ -82,42 +86,35 @@ void motion_callback(const std_msgs::String& msg)
 
 ros::Subscriber<std_msgs::String> sub("valid_motion", motion_callback);
 
-
-void motion_control_ISR(int base_pwm)
+void motion_control_ISR()
 {
   long r = read_right_pulse();
   long l = read_left_pulse();
-  long diff = r - l;
 
   int pwmR = 0, pwmL = 0;
   const int max_comp = 80;     
   const float Kp = 0.5f;
-  const int ticks_tolerance = 50;
+  const int ticks_tolerance = 5;
 
-  long error = 0;
-  const int turn_target = 300;
+  long error = r - l;
 
-  auto apply_pid = [&](long error){
-    if (abs(error) <= ticks_tolerance) error = 0;           
-    int comp = (int)(Kp * error);
-    comp = constrain(comp, -max_comp, max_comp);
-    
-    int left  = base_pwm + comp;
-    int right = base_pwm - comp;
+  if (abs(error) <= ticks_tolerance) error = 0;           
+  int comp = (int)(Kp * error);
+  comp = constrain(comp, -max_comp, max_comp);
+  
+  int left  = base_pwm + comp;
+  int right = base_pwm - comp;
 
-    left  = constrain(left,  0, 255);
-    right = constrain(right, 0, 255);
+  left  = constrain(left,  0, 255);
+  right = constrain(right, 0, 255);
 
-    pwmL = left; 
-    pwmR = right;
+  pwmL = left; 
+  pwmR = right;
 
-    motor_control(pwmR, IN1, IN2, ENA);
-    motor_control(pwmL, IN3, IN4, ENB);
-  };
-
-  error = r -l;
-  apply_pid(error);
+  motor_control(pwmR, IN1, IN2, ENA);
+  motor_control(pwmL, IN3, IN4, ENB);
 }
+
 
 void setup() 
 {
@@ -125,7 +122,8 @@ void setup()
 
   MsTimer2::set(Motion_control_period, motion_control_ISR);
   MsTimer2::start();
-  
+
+  Serial.begin(19200);
   nh.initNode();
   nh.subscribe(sub);
 }
@@ -133,6 +131,8 @@ void setup()
 void loop()
 {
   nh.spinOnce();
+  int l  = read_left_rpm();
+  int r = read_right_rpm();
 
-  delay(5);
+  delay(100);
 }
