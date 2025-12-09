@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="lidar" type="lidar_projection.py" name="lidar_projection" output="screen">
+    <param name="config_file" value="$(find lidar)/config/lidar_camera.yaml" />
+  </node>
+</launch>
