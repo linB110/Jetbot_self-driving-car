@@ -1,9 +1,12 @@
 <launch>
+  <!-- open GUI（rqt_image_view + YOLO window）or not -->
+  <arg name="use_gui" default="false" />
+
   <!-- 1. start usb_cam node（without image_view window） -->
   <node pkg="usb_cam"
         type="usb_cam_node"
         name="usb_cam"
-        output="screen">
+        output="log">
     <param name="video_device"  value="/dev/video0" />
     <param name="image_width"   value="640" />
     <param name="image_height"  value="480" />
@@ -18,14 +21,34 @@
   <node pkg="lidar"
         type="lidar_projection.py"
         name="lidar_projection"
-        output="screen">
+        output="log">
     <param name="image_topic" value="/usb_cam/image_raw" />
     <param name="scan_topic"  value="/scan" />
   </node>
 
-  <!-- 4. start rqt_image_view，for fusion image -->
-  <node pkg="rqt_image_view"
-        type="rqt_image_view"
-        name="rqt_image_view"
-        output="screen" />
+  <!-- 4. rqt_image_view is activated when use_gui:=true  -->
+  <group if="$(arg use_gui)">
+    <node pkg="rqt_image_view"
+          type="rqt_image_view"
+          name="rqt_image_view"
+          output="log" />
+  </group>
+
+  <!-- 5. start YOLO detection node -->
+  <node pkg="yolo_detection"
+        type="yolo_detection"
+        name="yolo_detection"
+        output="screen">
+    <!-- let private NodeHandle("~") azquire /yolo_detection/show_image -->
+    <param name="show_image" value="$(arg use_gui)" />
+  </node>
+
+  <!-- 6. start YOLO lidar fusion node -->
+  <node pkg="lidar"
+        type="lidar_yolo_fusion.py"
+        name="lidar_yolo_fusion"
+        output="screen">
+    <param name="config_file" value="$(find lidar)/config/lidar_camera.yaml" />
+    <param name="yolo_topic" value="/yolo/detection_node" />
+  </node>
 </launch>
