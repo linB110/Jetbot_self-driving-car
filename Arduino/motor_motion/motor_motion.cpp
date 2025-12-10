@@ -218,57 +218,67 @@ void move_backward()
   motor_control(-pwm_left_mag,  IN3, IN4, ENB);
 }
 
-void turn_right()
+void turn_right(int base_pwm, int diff)
 {
-  long r_pulse = read_right_pulse();
-  long l_pulse = read_left_pulse();
-
-  long diff   = r_pulse - l_pulse;           
-  long target = -ticks_turning_diff;          
-  long error  = diff - target;
-  if (abs(error) <= ticks_tolerance) error = 0;
-
-  const int max_comp = 60;
-  const int min_pwm  = 80;
-
-  int comp = (int)(Kp * error);
-  comp = constrain(comp, -max_comp, max_comp);
-
-  int pwm_left  = min_pwm + comp;  
-  int pwm_right = min_pwm - comp;
-
-  pwm_left  = max(pwm_left,  min_pwm);
-  pwm_right = max(pwm_right, min_pwm);
-
-  motor_control(pwm_right, IN1, IN2, ENA);
-  motor_control(pwm_left,  IN3, IN4, ENB);
+  motor_control(base_pwm + diff, IN1, IN2, ENA);
+  motor_control(base_pwm,  IN3, IN4, ENB);
 }
 
-void turn_left()
+void turn_left(int base_pwm, int diff)
 {
-  long r_pulse = read_right_pulse();
-  long l_pulse = read_left_pulse();
-
-  long diff   = r_pulse - l_pulse;           
-  long target = +ticks_turning_diff;          
-  long error  = diff - target;
-  if (abs(error) <= ticks_tolerance) error = 0;
-
-  const int max_comp = 60;
-  const int min_pwm  = 80;
-
-  int comp = (int)(Kp * error);
-  comp = constrain(comp, -max_comp, max_comp);
-
-  int pwm_left  = min_pwm + comp;
-  int pwm_right = min_pwm - comp;
-
-  pwm_left  = max(pwm_left,  min_pwm);
-  pwm_right = max(pwm_right, min_pwm);
-
-  motor_control(pwm_right, IN1, IN2, ENA);
-  motor_control(pwm_left,  IN3, IN4, ENB);
+  motor_control(base_pwm, IN1, IN2, ENA);
+  motor_control(base_pwm + diff, IN3, IN4, ENB);
 }
+
+//void turn_right(int base_pwm)
+//{
+//  long r_pulse = read_right_pulse();
+//  long l_pulse = read_left_pulse();
+//
+//  long diff   = r_pulse - l_pulse;           
+//  long target = -ticks_turning_diff;          
+//  long error  = diff - target;
+//  if (abs(error) <= ticks_tolerance) error = 0;
+//
+//  const int max_comp = 60;
+//
+//  int comp = (int)(Kp * error);
+//  comp = constrain(comp, -max_comp, max_comp);
+//
+//  int pwm_left  = base_pwm + comp;  
+//  int pwm_right = base_pwm - comp;
+//
+//  pwm_left  = max(pwm_left,  base_pwm);
+//  pwm_right = max(pwm_right, base_pwm);
+//
+//  motor_control(pwm_right, IN1, IN2, ENA);
+//  motor_control(pwm_left,  IN3, IN4, ENB);
+//}
+
+//void turn_left(int base_pwm)
+//{
+//  long r_pulse = read_right_pulse();
+//  long l_pulse = read_left_pulse();
+//
+//  long diff   = r_pulse - l_pulse;           
+//  long target = +ticks_turning_diff;          
+//  long error  = diff - target;
+//  if (abs(error) <= ticks_tolerance) error = 0;
+//
+//  const int max_comp = 60;
+//
+//  int comp = (int)(Kp * error);
+//  comp = constrain(comp, -max_comp, max_comp);
+//
+//  int pwm_left  = base_pwm + comp;
+//  int pwm_right = base_pwm - comp;
+//
+//  pwm_left  = max(pwm_left,  base_pwm);
+//  pwm_right = max(pwm_right, base_pwm);
+//
+//  motor_control(pwm_right, IN1, IN2, ENA);
+//  motor_control(pwm_left,  IN3, IN4, ENB);
+//}
 
 void rotate_cw(int pwm)
 {
