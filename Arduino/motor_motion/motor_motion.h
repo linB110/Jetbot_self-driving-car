@@ -51,8 +51,8 @@ void motor_control(int pwm, int inA, int inB, int enable);
 // motor control (closed loop)
 void move_forward();
 void move_backward();
-void turn_right();
-void turn_left();
+void turn_right(int base_pwm, int diff);
+void turn_left(int base_pwm, int diff);
 void rotate_cw(int pwm = 125);
 void rotate_ccw(int pwm = 125);
 void stop_motors();
