@@ -236,6 +236,16 @@ public:
 
         cudaStreamCreate(&stream_);
         std::cout << "[TRT] finished initialization" << std::endl;
+
+        // warmup inference
+        cv::Mat dummy(INPUT_H, INPUT_W, CV_8UC3, cv::Scalar(0, 0, 0));
+        std::vector<BBox> dummyBoxes;
+        cv::Mat dummyVis;
+        
+        float t;
+        std::cout << "[TRT] warmup inferencing..." << std::endl;
+        infer(dummy, dummyBoxes, dummyVis, t);
+        std::cout << "[TRT] warmup done, first inference time : " << t << std::endl;
     }
 
     ~TrtYolo()
@@ -619,6 +629,9 @@ private:
 
 int main(int argc, char** argv)
 {
+    // establish GPU context
+    cudaFree(0);
+    
     ros::init(argc, argv, "yolo_detection");
     ros::NodeHandle nh;
 
