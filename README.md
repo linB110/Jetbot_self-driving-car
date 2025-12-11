@@ -28,6 +28,7 @@
 # 🧪 Training Environment Setup (ScaledYOLOv4 + CUDA)
 
 > Training is done on a desktop GPU (RTX series). Jetson Nano is used for inference only.
+> 👉 [requirements.txt](./requirements.txt)
 
 ## 🚀 1. Create Conda Environment
 
