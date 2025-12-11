@@ -2,6 +2,8 @@
 
 ![My image](jetbot.png)
 
+<video src="demo.mp4" controls></video>
+
 ---
 
 ## 🖥️ Environment
