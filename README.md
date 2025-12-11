@@ -2,7 +2,11 @@
 
 ![My image](jetbot.png)
 
-<video src="demo.mp4" controls></video>
+<video controls width="600">
+  <source src="./demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 
 ---
 
