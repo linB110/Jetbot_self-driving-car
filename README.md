@@ -1,5 +1,9 @@
 # 🚗 Jetbot Self-Driving Car
 
+![My image](jetbot.png)
+
+---
+
 ## 🖥️ Environment
 
 * **Ubuntu** : 18.04.6 LTS
