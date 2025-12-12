@@ -225,12 +225,12 @@ Arduino/
 │   └── motor_motion.ino
 
 catkin_ws/src                        # ROS workspace
-│── rplidar_ros/
+│── rplidar_ros/                     # lidar detection and sensing
 │   ├── launch/
 │   ├── src/
 │   └── ...
 │
-│── lidar/
+│── lidar/                          # lidar projection
 │   ├── CMakeLists.txt
 │   ├── package.xml
 │   ├── config/
@@ -241,8 +241,21 @@ catkin_ws/src                        # ROS workspace
 │── yolo_detection/
 │   ├── CMakeLists.txt
 │   ├── package.xml
-│   ├── msg/
-│   └── src/yolo_detection.cpp
+│   ├── msg/detection.msg
+│   ├── launch/yolo_inference.launch
+│   ├── config/yolo_param.yaml
+│   ├                          
+│   ├── include/                     # yolo inference
+│   │   ├── utils.h
+│   │   ├── trt_yolo.h
+│   │   └──  yolo_ros_node.h
+│   │
+│   └── src/
+│   │   ├── utils.cpp
+│   │   ├── trt_yolo.cpp
+│   │   ├── yolo_ros_node.cpp
+│   │   └── main.cpp
+
 ```
 
 ---
@@ -265,6 +278,20 @@ Arduino motor control
 
 ---
 
+🔍 YOLO Inference on Jetson Nano
+
+1️⃣ Load YOLO Parameters
+
+Edit : yolo_detection/config/yolo_param.yaml
+
+2️⃣ Launch YOLO Inference
+
+`roslaunch yolo_detection yolo_inference.launch use_gui:=true`
+
+* `use_gui:=true` → display camera with bounding boxes
+
+---
+
 # ▶️ Running the Full System on Jetbot
 
 Below are the actual commands used to run the entire pipeline.
@@ -281,7 +308,7 @@ roscore
 roslaunch lidar lidar_camera_fusion.launch use_gui:=true
 ```
 
-* `use_gui:=true` → display camera with bounding boxes
+* `use_gui:=true` → display camera with bounding boxes and lidar points projected
 * Disable GUI:
 
 ```bash
