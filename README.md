@@ -2,6 +2,7 @@
 
 ![My image](jetbot.png)
 
+The video is recorded via SSH connection, so it might seems laggy (but inference is runnung at 30+FPS basis on Jetson nano)
 <video controls width="600" src="https://github.com/user-attachments/assets/828a5b6e-d7d7-46b5-a1ad-34fc8aba68cd"></video>
 
 ---
