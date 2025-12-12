@@ -1,0 +1,20 @@
+<!-- 1. start usb_cam node（without image_view window） -->
+  <node pkg="usb_cam"
+        type="usb_cam_node"
+        name="usb_cam"
+        output="log">
+    <param name="video_device"  value="/dev/video0" />
+    <param name="image_width"   value="640" />
+    <param name="image_height"  value="480" />
+    <param name="pixel_format"  value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+  </node>
+
+ <!-- 2. start YOLO detection node -->
+  <node pkg="yolo_detection"
+        type="yolo_detection"
+        name="yolo_detection"
+        output="screen">
+    <!-- let private NodeHandle("~") azquire /yolo_detection/show_image -->
+    <param name="show_image" value="$(arg use_gui)" />
+  </node>
