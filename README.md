@@ -1,6 +1,14 @@
-# 🚗 Jetbot Self-Driving Car
+<img width="512" height="512" alt="image" src="https://github.com/user-attachments/assets/21551bd1-d1c1-434d-9974-ad2f3f5008da" /># 🚗 Jetbot Self-Driving Car
 
-![My image](jetbot.png)
+![My image](./asset/jetbot.png)
+
+---
+
+## ⚙️ system architecture
+
+![System](./asset/systen_structure.png)
+
+---
 
 The video is recorded via SSH connection, so it might seems laggy (but inference is runnung at 30+FPS basis on Jetson nano)
 <video controls width="600" src="https://github.com/user-attachments/assets/828a5b6e-d7d7-46b5-a1ad-34fc8aba68cd"></video>
