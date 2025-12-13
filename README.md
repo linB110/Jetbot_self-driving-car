@@ -1,4 +1,4 @@
-<img width="512" height="512" alt="image" src="https://github.com/user-attachments/assets/21551bd1-d1c1-434d-9974-ad2f3f5008da" /># 🚗 Jetbot Self-Driving Car
+# 🚗 Jetbot Self-Driving Car
 
 ![My image](./asset/jetbot.png)
 
